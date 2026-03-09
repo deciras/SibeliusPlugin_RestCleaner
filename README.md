@@ -138,3 +138,196 @@ RestCleaner/
 ├─ CHANGELOG.md
 └─ plugin/
    └─ RestCleaner.plg
+```
+
+---
+
+## 未来计划
+
+未来版本可能增加：
+
+- 自动识别拍号
+- 完整支持 3/4 与 6/8
+- 更严格的出版级休止符规则
+- 声部感知处理
+- “仅检测、不修改”模式
+- 更友好的插件参数界面
+
+---
+
+## 许可证
+
+本项目采用 **MIT License**。
+
+---
+
+## 作者
+
+作者：**Deciras**
+
+如果你发现问题，或对插件有改进建议，欢迎提交 Issue。
+
+---
+
+# English
+
+## Overview
+
+RestCleaner is a **Sibelius** plugin designed to clean and normalize rests according to common engraving rules.
+
+It mainly addresses two types of problems:
+
+1. **Illegal cross-beat rests**  
+   For example, in 4/4 meter, a quarter rest that crosses a beat boundary is usually not considered proper notation.
+
+2. **Adjacent rests that should be merged but are not**  
+   For example, two sixteenth rests, two eighth rests, or two quarter rests that should be merged according to engraving rules.
+
+---
+
+## Current Features
+
+Current version (v1.0) mainly provides the following features:
+
+### 1. Fix illegal cross-beat quarter rests
+
+In 4/4 meter, if a quarter rest starts at an incorrect position and crosses a beat boundary, the plugin rewrites it into a more appropriate rest pattern.
+
+For example:
+
+- Incorrect: one quarter rest crossing a beat boundary
+- Correct: two eighth rests
+
+### 2. Merge legal adjacent rests
+
+The plugin merges adjacent rests only when the result follows engraving-style rules, for example:
+
+- sixteenth rest + sixteenth rest → eighth rest
+- eighth rest + eighth rest → quarter rest (only within the same beat)
+- quarter rest + quarter rest → half rest (only across beats 1–2 or 3–4 in 4/4)
+
+### 3. Avoid incorrect merges
+
+The plugin tries to avoid merges that would hide beat structure, such as:
+
+- merging eighth rests across a beat boundary into a quarter rest
+- merging quarter rests across beats 2–3 in 4/4 into a half rest
+- merges that reduce rhythmic readability
+
+---
+
+## Current Support
+
+The current version is mainly tested and optimized for **4/4** meter.
+
+Other meters such as 3/4 and 6/8 have been planned at the rule-design level, but are not yet fully implemented or thoroughly tested.
+
+Planned future support includes:
+
+- 3/4
+- 6/8
+- automatic meter detection
+- more robust voice-aware processing
+
+---
+
+## Installation
+
+Download the plugin file:
+
+`plugin/RestCleaner.plg`
+
+Then copy it to your Sibelius user plugin directory.
+
+### Windows
+
+`C:\Users\<username>\AppData\Roaming\Avid\Sibelius\Plugins\`
+
+### macOS
+
+`~/Library/Application Support/Avid/Sibelius/Plugins/`
+
+You may also create a subfolder inside `Plugins`, for example:
+
+`Plugins/Rest Cleaner/`
+
+After installation, **restart Sibelius**.
+
+---
+
+## Usage
+
+1. Make a **passage selection** in your score
+2. Run the plugin in Sibelius:
+
+`Plugins → Rest Cleaner → RestCleaner`
+
+The plugin will run in this order:
+
+1. fix illegal rests
+2. merge legal rests
+
+---
+
+## Recommendations
+
+Before running the plugin, it is recommended to:
+
+- save your score first
+- or test it on a copy
+
+If needed, you can always undo:
+
+- macOS: `Cmd + Z`
+- Windows: `Ctrl + Z`
+
+---
+
+## Known Limitations
+
+The current version still has several limitations:
+
+- mainly optimized for 4/4
+- does not yet fully distinguish voices
+- limited support for complex tuplets
+- best tested on relatively clear single-voice or simple textures
+
+---
+
+## Project Structure
+
+```text
+RestCleaner/
+├─ README.md
+├─ LICENSE
+├─ CHANGELOG.md
+└─ plugin/
+   └─ RestCleaner.plg
+```
+
+---
+
+## Roadmap
+
+Possible future improvements include:
+
+- automatic meter detection
+- full support for 3/4 and 6/8
+- stricter engraving-level rest rules
+- voice-aware processing
+- a “detect only” mode
+- a more user-friendly options dialog
+
+---
+
+## License
+
+This project is released under the **MIT License**.
+
+---
+
+## Author
+
+Author: **Deciras**
+
+If you find a bug or have suggestions for improvement, feel free to open an Issue.
