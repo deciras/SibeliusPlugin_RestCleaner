@@ -1,143 +1,140 @@
 # RestCleaner for Sibelius
 
-A small Sibelius plugin that automatically cleans and normalizes rests according to common engraving rules.
-
-This plugin was created to help fix common rest notation problems that often appear when writing or importing scores.
+[中文](#中文说明) | [English](#english)
 
 ---
 
-## Features
+# 中文说明
 
-Current version (v1.0) supports:
+## 简介
 
-### Fix illegal rests
+RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中的休止符，使其更符合常见的出版级记谱规则。
 
-Automatically splits illegal cross-beat quarter rests.
+这个插件主要用于修复两类常见问题：
 
-Example (4/4):
+1. **非法跨拍休止符**  
+   例如在 4/4 拍中，一个四分休止符横跨拍子边界，这种写法通常不符合规范。
 
-Incorrect:
-
-| 1 + | 2 |
-   [quarter rest]
-
-Correct:
-
-| 1 + | 2 |
- 8rest 8rest
+2. **未按记谱规则合并的连续休止符**  
+   例如本应合并的两个十六分休止符、两个八分休止符，或符合规则的两个四分休止符。
 
 ---
 
-### Merge legal rests
+## 当前功能
 
-The plugin merges rests when allowed by engraving rules.
+当前版本（v1.0）主要支持以下功能：
 
-Examples:
+### 1. 修复非法跨拍四分休止符
 
-16 + 16  ->  8  
-8 + 8    ->  4  
-4 + 4    ->  2  (only in beats 1–2 or 3–4 in 4/4)
+在 4/4 拍中，如果一个四分休止符起始于错误的位置、横跨拍边界，插件会将其拆分为更合适的休止符写法。
 
-The plugin avoids merges that hide beat structure.
+例如：
+
+- 不规范：跨越拍边界的四分休止符
+- 规范：两个八分休止符
+
+### 2. 合并合法连续休止符
+
+插件会在符合出版级规则的前提下合并相邻休止符，例如：
+
+- 十六分休止符 + 十六分休止符 → 八分休止符
+- 八分休止符 + 八分休止符 → 四分休止符（仅限同一拍内）
+- 四分休止符 + 四分休止符 → 二分休止符（仅限 4/4 中的第 1–2 拍或第 3–4 拍）
+
+### 3. 避免错误合并
+
+插件会尽量避免以下不符合规范的合并：
+
+- 跨拍边界的八分休止符合并成四分休止符
+- 在 4/4 中将第 2 拍与第 3 拍的四分休止符合并成二分休止符
+- 破坏节拍结构可读性的合并
 
 ---
 
-## Currently Tested Meter
+## 当前支持情况
 
-- 4/4 (primary target)
+目前主要针对 **4/4 拍** 进行了测试与优化。
 
-Other meters may work but are not fully tested yet.
+其他拍号（如 3/4、6/8）已经进行了规则设计，但当前版本尚未完整实现或充分测试。
 
-Future versions may support:
+计划后续支持：
 
 - 3/4
 - 6/8
-- automatic time signature detection
+- 自动识别拍号
+- 更严格的声部处理
 
 ---
 
-## Installation
+## 安装方法
 
-Download the plugin file:
+请下载插件文件：
 
-plugin/RestCleaner.plg
+`plugin/RestCleaner.plg`
 
-Copy it to your Sibelius user plugin directory.
+然后将其复制到 Sibelius 的用户插件目录中。
 
 ### Windows
 
-C:\Users\<username>\AppData\Roaming\Avid\Sibelius\Plugins\
+`C:\Users\<用户名>\AppData\Roaming\Avid\Sibelius\Plugins\`
 
 ### macOS
 
-~/Library/Application Support/Avid/Sibelius/Plugins/
+`~/Library/Application Support/Avid/Sibelius/Plugins/`
 
-You may create a subfolder such as:
+你也可以在 `Plugins` 目录下新建一个子文件夹，例如：
 
-Plugins/Rest Cleaner/
+`Plugins/Rest Cleaner/`
 
-Restart Sibelius after installing.
-
----
-
-## Usage
-
-1. Select a passage in your score.
-2. Run the plugin:
-
-Plugins → Rest Cleaner → RestCleaner
-
-The plugin will:
-
-1. Fix illegal rests.
-2. Merge legal adjacent rests.
+安装完成后，请**重新启动 Sibelius**。
 
 ---
 
-## Safety Notes
+## 使用方法
 
-It is recommended to:
+1. 在乐谱中**框选需要处理的区域**（passage selection）
+2. 在 Sibelius 中运行插件：
 
-- Save your score before running the plugin
-- Test on a copy first
+`Plugins → Rest Cleaner → RestCleaner`
 
-You can always undo with:
+插件会按顺序执行：
 
-Mac: Cmd + Z  
-Windows: Ctrl + Z
-
----
-
-## Known Limitations
-
-Current version:
-
-- does not distinguish voices
-- may behave unexpectedly in complex tuplets
-- primarily optimized for 4/4
+1. 修复非法休止符
+2. 合并合法休止符
 
 ---
 
-## Future Improvements
+## 使用建议
 
-Possible improvements:
+在运行插件之前，建议：
 
-- automatic meter detection
-- better 3/4 support
-- better 6/8 support
-- voice-aware processing
-- optional "detect only" mode
+- 先保存乐谱
+- 或先在副本上测试
 
----
+如果结果不符合预期，可以使用撤销：
 
-## License
-
-This project is released under the MIT License.
+- macOS：`Cmd + Z`
+- Windows：`Ctrl + Z`
 
 ---
 
-## Author
+## 已知限制
 
-Created by **Deciras**
+当前版本仍有一些限制：
 
-If you encounter issues or have suggestions, feel free to open an issue.
+- 主要针对 4/4 拍
+- 暂未完整区分不同声部（Voice）
+- 对复杂 Tuplet / 三连音情况支持有限
+- 建议先在简单、单声部或较清晰的谱面上测试
+
+---
+
+## 项目结构
+
+```text
+RestCleaner/
+├─ README.md
+├─ LICENSE
+├─ CHANGELOG.md
+└─ plugin/
+   └─ RestCleaner.plg
