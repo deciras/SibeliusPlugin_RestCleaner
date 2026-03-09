@@ -1,6 +1,5 @@
 RestCleaner for Sibelius
 Version: v1
-Author: (你的名字)
 
 ---
 
