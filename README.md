@@ -22,7 +22,7 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 
 ## 当前功能
 
-当前版本（v1.2.0）主要支持以下功能：
+当前版本（v1.3.0）主要支持以下功能：
 
 ### 1. 修复非法跨组四分休止符
 
@@ -49,6 +49,15 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 - 在 4/4 中将第 2 拍与第 3 拍的四分休止符合并成二分休止符
 - 破坏节拍结构可读性的合并
 
+### 4. GUI 设置窗口
+
+运行插件后会先弹出一个设置窗口，你可以在里面：
+
+- 选择只做“修复非法休止符”或只做“合并合法休止符”
+- 选择“仅检测不修改”
+- 查看当前选区里检测到的拍号
+- 为奇数 `x/8` 拍号输入本次运行要使用的重音分组
+
 ---
 
 ## 当前支持情况
@@ -62,7 +71,7 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 - `4/4`
 - `6/8`
 
-另外，对以下奇数 `x/8` 拍号也加入了保守默认规则：
+另外，对以下奇数 `x/8` 拍号支持**运行时自定义分组**：
 
 - `5/8`
 - `7/8`
@@ -73,7 +82,9 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 
 - 对分母为 `4` 的拍号，插件按四分拍分组处理。
 - 对 `6/8` 这类复拍子，插件按附点四分拍分组处理。
-- 对 `5/8`、`7/8`、`11/8`、`13/8` 这类奇数 `x/8` 拍号，插件目前采用接近 `2+2+...+3` 的默认分组思路。这能覆盖不少常见写法，但不保证与你具体作品中的重音分组完全一致。
+- 对 `5/8`、`7/8`、`9/8`、`11/8`、`13/8`，你可以在 GUI 里直接输入分组，例如 `2+3`、`3+2`、`2+2+3`、`3+3+3`。
+- 如果当前选区没有出现某个奇数拍号，对应输入不会参与本次运行。
+- 对未单独提供输入框的其他奇数 `x/8` 拍号，插件仍会使用默认分组策略。
 
 ---
 
@@ -108,7 +119,7 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 
 `Plugins → Rest Cleaner → RestCleaner`
 
-插件会按顺序执行：
+插件会先弹出 GUI 设置窗口；确认后再按顺序执行：
 
 1. 修复非法休止符
 2. 合并合法休止符
@@ -135,7 +146,8 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 
 - 暂未完整区分不同声部（Voice）
 - 对复杂 Tuplet / 三连音情况支持有限
-- 奇数 `x/8` 拍号目前使用默认分组，不一定匹配所有作品的真实重音结构
+- “仅检测不修改”模式下，合并数量只基于当前状态估计，不继续模拟后续迭代
+- 未单独提供输入框的其他奇数 `x/8` 拍号仍使用默认分组，不一定匹配所有作品的真实重音结构
 - 建议先在简单、单声部或较清晰的谱面上测试，再应用到复杂总谱
 
 ---
@@ -157,11 +169,10 @@ SibeliusPlugin_RestCleaner/
 
 未来版本可能增加：
 
-- 更丰富的奇数拍分组自定义
 - 更严格的出版级休止符规则
 - 声部感知处理
-- “仅检测、不修改”模式
-- 更友好的插件参数界面
+- 更完整的奇数拍覆盖范围
+- 更细的“仅检测”预估逻辑
 
 ---
 
@@ -197,7 +208,7 @@ It mainly addresses two types of problems:
 
 ## Current Features
 
-Current version (v1.2.0) mainly provides the following features:
+Current version (v1.3.0) mainly provides the following features:
 
 ### 1. Fix illegal cross-group quarter rests
 
@@ -224,6 +235,15 @@ The plugin tries to avoid merges that would hide beat structure, such as:
 - merging quarter rests across beats 2–3 in 4/4 into a half rest
 - merges that reduce rhythmic readability
 
+### 4. GUI options dialog
+
+Before processing, the plugin now opens a small dialog where you can:
+
+- run only the split step or only the merge step
+- choose a detect-only mode
+- review which meters were found in the current selection
+- enter the grouping to use for odd `x/8` meters in this run
+
 ---
 
 ## Current Support
@@ -237,7 +257,7 @@ Implemented focus meters include:
 - `4/4`
 - `6/8`
 
-The plugin also includes a conservative default strategy for several odd `x/8` meters such as:
+The plugin supports **runtime grouping input** for odd `x/8` meters such as:
 
 - `5/8`
 - `7/8`
@@ -248,7 +268,9 @@ Notes:
 
 - For denominator-`4` meters, the plugin uses quarter-note beat groups.
 - For `6/8`-style compound meters, the plugin uses dotted-quarter beat groups.
-- For odd `x/8` meters, the current implementation assumes a default grouping close to `2+2+...+3`. This covers many practical cases, but it may not match every score's intended accent pattern.
+- For `5/8`, `7/8`, `9/8`, `11/8`, and `13/8`, you can enter a grouping such as `2+3`, `2+2+3`, or `3+3+3` in the GUI.
+- If a given odd meter does not appear in the current selection, its input is ignored for that run.
+- Other odd `x/8` meters without dedicated input fields still fall back to the default grouping strategy.
 
 ---
 
@@ -283,7 +305,7 @@ After installation, **restart Sibelius**.
 
 `Plugins → Rest Cleaner → RestCleaner`
 
-The plugin will run in this order:
+The plugin first opens the GUI dialog; after confirmation, it runs in this order:
 
 1. fix illegal rests
 2. merge legal rests
@@ -310,7 +332,8 @@ The current version still has several limitations:
 
 - it does not yet fully distinguish voices
 - support for complex tuplets is limited
-- odd `x/8` meters currently use a default grouping assumption rather than user-defined grouping
+- detect-only mode estimates merge opportunities from the current notation state and does not fully simulate later iterative passes
+- odd `x/8` meters without dedicated input fields still use the default grouping fallback
 - testing on relatively clear single-voice or simple textures is still recommended first
 
 ---
@@ -332,11 +355,10 @@ SibeliusPlugin_RestCleaner/
 
 Possible future improvements include:
 
-- richer custom grouping for odd meters
 - stricter engraving-level rest rules
 - voice-aware processing
-- a “detect only” mode
-- a more user-friendly options dialog
+- broader odd-meter coverage
+- finer detect-only estimation
 
 ---
 

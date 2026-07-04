@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.3.0
+
+- Added a GUI dialog before processing.
+- Added per-run switches for split, merge, and detect-only modes.
+- Added user-editable grouping input for odd `x/8` meters including `5/8`, `7/8`, `9/8`, `11/8`, and `13/8`.
+- Added meter summary display for the current passage selection.
+- Kept mixed-meter handling bar-aware while letting odd-meter grouping be customized at run time.
+
 ## v1.2.0
 
 - Added iterative rest merging, so one run continues merging until no further legal merge remains.
