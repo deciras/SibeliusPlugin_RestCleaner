@@ -22,24 +22,24 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 
 ## 当前功能
 
-当前版本（v1.0）主要支持以下功能：
+当前版本（v1.2.0）主要支持以下功能：
 
-### 1. 修复非法跨拍四分休止符
+### 1. 修复非法跨组四分休止符
 
-在 4/4 拍中，如果一个四分休止符起始于错误的位置、横跨拍边界，插件会将其拆分为更合适的休止符写法。
+插件会按当前**所在小节的拍号**判断一个四分休止符是否跨越了不该跨越的节拍组边界；如果跨越，插件会将其拆分为更合适的休止符写法。
 
 例如：
 
 - 不规范：跨越拍边界的四分休止符
 - 规范：两个八分休止符
 
-### 2. 合并合法连续休止符
+### 2. 迭代合并合法连续休止符
 
-插件会在符合出版级规则的前提下合并相邻休止符，例如：
+插件会在符合出版级规则的前提下合并相邻休止符，并持续迭代，直到当前选区里不再出现新的合法合并。例如：
 
 - 十六分休止符 + 十六分休止符 → 八分休止符
-- 八分休止符 + 八分休止符 → 四分休止符（仅限同一拍内）
-- 四分休止符 + 四分休止符 → 二分休止符（仅限 4/4 中的第 1–2 拍或第 3–4 拍）
+- 八分休止符 + 八分休止符 → 四分休止符（仅限同一节拍组内）
+- 四分休止符 + 四分休止符 → 二分休止符（仅限当前拍号允许的组内位置）
 
 ### 3. 避免错误合并
 
@@ -53,16 +53,27 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 
 ## 当前支持情况
 
-目前主要针对 **4/4 拍** 进行了测试与优化。
+当前版本会**逐小节读取当前拍号**，所以在同一段选区内遇到变拍时，也会按每个小节分别判断，而不是把第一个拍号套用到整段音乐。
 
-其他拍号（如 3/4、6/8）已经进行了规则设计，但当前版本尚未完整实现或充分测试。
+目前已实现的重点支持包括：
 
-计划后续支持：
+- `2/4`
+- `3/4`
+- `4/4`
+- `6/8`
 
-- 3/4
-- 6/8
-- 自动识别拍号
-- 更严格的声部处理
+另外，对以下奇数 `x/8` 拍号也加入了保守默认规则：
+
+- `5/8`
+- `7/8`
+- `11/8`
+- `13/8`
+
+说明：
+
+- 对分母为 `4` 的拍号，插件按四分拍分组处理。
+- 对 `6/8` 这类复拍子，插件按附点四分拍分组处理。
+- 对 `5/8`、`7/8`、`11/8`、`13/8` 这类奇数 `x/8` 拍号，插件目前采用接近 `2+2+...+3` 的默认分组思路。这能覆盖不少常见写法，但不保证与你具体作品中的重音分组完全一致。
 
 ---
 
@@ -70,7 +81,7 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 
 请下载插件文件：
 
-`plugin/RestCleaner.plg`
+`RestCleaner.plg`
 
 然后将其复制到 Sibelius 的用户插件目录中。
 
@@ -122,22 +133,22 @@ RestCleaner 是一个用于 **Sibelius** 的插件，用于自动整理乐谱中
 
 当前版本仍有一些限制：
 
-- 主要针对 4/4 拍
 - 暂未完整区分不同声部（Voice）
 - 对复杂 Tuplet / 三连音情况支持有限
-- 建议先在简单、单声部或较清晰的谱面上测试
+- 奇数 `x/8` 拍号目前使用默认分组，不一定匹配所有作品的真实重音结构
+- 建议先在简单、单声部或较清晰的谱面上测试，再应用到复杂总谱
 
 ---
 
 ## 项目结构
 
 ```text
-RestCleaner/
+SibeliusPlugin_RestCleaner/
+├─ RestCleaner.plg
 ├─ README.md
 ├─ LICENSE
 ├─ CHANGELOG.md
-└─ plugin/
-   └─ RestCleaner.plg
+└─ VERSION
 ```
 
 ---
@@ -146,8 +157,7 @@ RestCleaner/
 
 未来版本可能增加：
 
-- 自动识别拍号
-- 完整支持 3/4 与 6/8
+- 更丰富的奇数拍分组自定义
 - 更严格的出版级休止符规则
 - 声部感知处理
 - “仅检测、不修改”模式
@@ -187,24 +197,24 @@ It mainly addresses two types of problems:
 
 ## Current Features
 
-Current version (v1.0) mainly provides the following features:
+Current version (v1.2.0) mainly provides the following features:
 
-### 1. Fix illegal cross-beat quarter rests
+### 1. Fix illegal cross-group quarter rests
 
-In 4/4 meter, if a quarter rest starts at an incorrect position and crosses a beat boundary, the plugin rewrites it into a more appropriate rest pattern.
+The plugin reads the **meter of the current bar** and rewrites quarter rests that cross a beat-group boundary that should stay visible.
 
 For example:
 
 - Incorrect: one quarter rest crossing a beat boundary
 - Correct: two eighth rests
 
-### 2. Merge legal adjacent rests
+### 2. Iteratively merge legal adjacent rests
 
-The plugin merges adjacent rests only when the result follows engraving-style rules, for example:
+The plugin merges adjacent rests only when the result follows engraving-style rules, and keeps iterating until no further legal merge remains in the current selection. For example:
 
 - sixteenth rest + sixteenth rest → eighth rest
-- eighth rest + eighth rest → quarter rest (only within the same beat)
-- quarter rest + quarter rest → half rest (only across beats 1–2 or 3–4 in 4/4)
+- eighth rest + eighth rest → quarter rest (only within the same beat group)
+- quarter rest + quarter rest → half rest (only where the current meter/grouping allows it)
 
 ### 3. Avoid incorrect merges
 
@@ -218,16 +228,27 @@ The plugin tries to avoid merges that would hide beat structure, such as:
 
 ## Current Support
 
-The current version is mainly tested and optimized for **4/4** meter.
+The current version processes the selection **bar by bar**, so mixed-meter passages are handled using the local meter of each bar rather than one global assumption.
 
-Other meters such as 3/4 and 6/8 have been planned at the rule-design level, but are not yet fully implemented or thoroughly tested.
+Implemented focus meters include:
 
-Planned future support includes:
+- `2/4`
+- `3/4`
+- `4/4`
+- `6/8`
 
-- 3/4
-- 6/8
-- automatic meter detection
-- more robust voice-aware processing
+The plugin also includes a conservative default strategy for several odd `x/8` meters such as:
+
+- `5/8`
+- `7/8`
+- `11/8`
+- `13/8`
+
+Notes:
+
+- For denominator-`4` meters, the plugin uses quarter-note beat groups.
+- For `6/8`-style compound meters, the plugin uses dotted-quarter beat groups.
+- For odd `x/8` meters, the current implementation assumes a default grouping close to `2+2+...+3`. This covers many practical cases, but it may not match every score's intended accent pattern.
 
 ---
 
@@ -235,7 +256,7 @@ Planned future support includes:
 
 Download the plugin file:
 
-`plugin/RestCleaner.plg`
+`RestCleaner.plg`
 
 Then copy it to your Sibelius user plugin directory.
 
@@ -287,22 +308,22 @@ If needed, you can always undo:
 
 The current version still has several limitations:
 
-- mainly optimized for 4/4
-- does not yet fully distinguish voices
-- limited support for complex tuplets
-- best tested on relatively clear single-voice or simple textures
+- it does not yet fully distinguish voices
+- support for complex tuplets is limited
+- odd `x/8` meters currently use a default grouping assumption rather than user-defined grouping
+- testing on relatively clear single-voice or simple textures is still recommended first
 
 ---
 
 ## Project Structure
 
 ```text
-RestCleaner/
+SibeliusPlugin_RestCleaner/
+├─ RestCleaner.plg
 ├─ README.md
 ├─ LICENSE
 ├─ CHANGELOG.md
-└─ plugin/
-   └─ RestCleaner.plg
+└─ VERSION
 ```
 
 ---
@@ -311,8 +332,7 @@ RestCleaner/
 
 Possible future improvements include:
 
-- automatic meter detection
-- full support for 3/4 and 6/8
+- richer custom grouping for odd meters
 - stricter engraving-level rest rules
 - voice-aware processing
 - a “detect only” mode
